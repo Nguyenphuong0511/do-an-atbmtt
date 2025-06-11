@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>đăng nhập & đăng ký</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff9bb3; /* Màu hồng chính */
+            --secondary-color: #ff85a2; /* Màu hồng đậm hơn */
+            --light-color: #fff5f7; /* Nền hồng nhạt */
+            --dark-color: #5a2a38; /* Màu chữ đậm */
+            --gray-color: #a38d92; /* Màu chữ nhạt */
+            --border-radius: 12px; /* Bo tròn hơn */
+            --box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3); /* Shadow hồng */
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .form-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .form-header {
+            padding: 30px 30px 20px;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            color: var(--dark-color);
+            font-size: 24px;
+            font-weight: 700; /* Đậm hơn */
+            margin-bottom: 5px;
+        }
+
+        .form-body {
+            padding: 0 30px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+            font-weight: 700; /* Đậm hơn */
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 1px solid #ffd1dc;
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            transition: var(--transition);
+            background-color: #fffafb;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 155, 179, 0.2);
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 40px;
+            color: var(--primary-color);
+            font-size: 18px;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 25px 0;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+
+        .remember-me input {
+            margin-right: 8px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+
+        .remember-me label {
+            color: var(--dark-color); /* Đổi sang màu đen đậm */
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 600; /* Đậm hơn */
+        }
+
+        .forgot-password {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 14px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+            color: var(--secondary-color);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .form-footer {
+            text-align: center;
+            padding: 20px 30px 30px;
+            border-top: 1px solid #ffebf0;
+            color: var(--dark-color); /* Đổi sang màu đen đậm */
+            font-size: 15px;
+            font-weight: 600; /* Đậm hơn */
+        }
+
+        .toggle-form {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-left: 5px;
+        }
+
+        .toggle-form:hover {
+            text-decoration: underline;
+            color: var(--secondary-color);
+        }
+
+        /* Ẩn các form không cần thiết */
+        #signup-form,
+        #forgot-password-form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <!-- Form đăng nhập -->
+        <form id="login-form">
+            <div class="form-header">
+                <h1>Đăng nhập</h1>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    <label for="email">Địa chỉ Email</label>
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Nhập email của bạn" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Nhập mật khẩu" required>
+                </div>
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Ghi nhớ đăng nhập</label>
+                    </div>
+                    <a href="#" class="forgot-password" id="show-forgot">Quên mật khẩu?</a>
+                </div>
+                <button type="submit" class="submit-btn">Đăng nhập</button>
+            </div>
+            <div class="form-footer">
+                Chưa có tài khoản? <a href="#" class="toggle-form" id="show-signup">Tạo tài khoản</a>
+            </div>
+        </form>
+
+        <!-- Form đăng ký -->
+        <form id="signup-form">
+            <div class="form-header">
+                <h1>Tạo tài khoản</h1>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    <label for="fullname">Họ và tên</label>
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="fullname" placeholder="Nhập họ và tên" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Địa chỉ Email</label>
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="signup-email" placeholder="Nhập email của bạn" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Mật khẩu</label>
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="signup-password" placeholder="Tạo mật khẩu" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Xác nhận mật khẩu</label>
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="confirm-password" placeholder="Nhập lại mật khẩu" required>
+                </div>
+                <button type="submit" class="submit-btn">Đăng ký</button>
+            </div>
+            <div class="form-footer">
+                Đã có tài khoản? <a href="#" class="toggle-form" id="show-login">Đăng nhập</a>
+            </div>
+        </form>
+
+        <!-- Form quên mật khẩu -->
+        <form id="forgot-password-form">
+            <div class="form-header">
+                <h1>Khôi phục mật khẩu</h1>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    <label for="reset-email">Địa chỉ Email</label>
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="reset-email" placeholder="Nhập email của bạn" required>
+                </div>
+                <button type="submit" class="submit-btn">Gửi liên kết đặt lại mật khẩu</button>
+            </div>
+            <div class="form-footer">
+                <a href="#" class="toggle-form" id="back-to-login">Quay lại đăng nhập</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const forgotForm = document.getElementById('forgot-password-form');
+            
+            const showSignup = document.getElementById('show-signup');
+            const showLogin = document.getElementById('show-login');
+            const showForgot = document.getElementById('show-forgot');
+            const backToLogin = document.getElementById('back-to-login');
+
+            // Chuyển đổi giữa các form
+            function showForm(formToShow) {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'none';
+                forgotForm.style.display = 'none';
+                formToShow.style.display = 'block';
+            }
+
+            // Sự kiện click
+            showSignup.addEventListener('click', (e) => {
+                e.preventDefault();
+                showForm(signupForm);
+            });
+
+            showLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                showForm(loginForm);
+            });
+
+            showForgot.addEventListener('click', (e) => {
+                e.preventDefault();
+                showForm(forgotForm);
+            });
+
+            backToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                showForm(loginForm);
+            });
+
+            // Xử lý submit form đăng nhập
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                window.location.href = 'chukyso1.html';
+            });
+
+            // Xử lý submit form đăng ký
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('fullname').value;
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+
+                if (password !== confirmPassword) {
+                    alert('Mật khẩu xác nhận không khớp!');
+                    return;
+                }
+
+                try {
+                    const res = await fetch('http://localhost:3000/customers', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, email, password })
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        alert('Tạo tài khoản thành công!');
+                        showForm(loginForm);
+                    } else {
+                        alert(data.error || 'Đăng ký thất bại!');
+                    }
+                } catch (err) {
+                    alert('Không thể kết nối tới server!');
+                }
+            });
+
+            // Xử lý submit form quên mật khẩu
+            forgotForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Liên kết đặt lại mật khẩu đã được gửi tới email của bạn');
+                showForm(loginForm);
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

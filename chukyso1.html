@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Chữ ký số PKI</title>
+    <style>
+        :root {
+            --primary-color: #f5b3c1; /* Màu hồng nhạt hơn */
+            --secondary-color: #f1a7b8; /* Màu hồng đậm hơn */
+            --light-color: #fff5f7; /* Nền hồng nhạt hơn */
+            --dark-color: #5a2a38; /* Màu chữ đậm */
+            --gray-color: #a38d92; /* Màu chữ nhạt */
+            --border-radius: 12px; /* Bo tròn hơn */
+            --box-shadow: 0 4px 15px rgba(255,182,193,0.18); /* Shadow hồng nhạt hơn */
+            --transition: all 0.3s ease;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-color);
+            margin: 0;
+            padding: 0;
+            color: var(--dark-color);
+        }
+        header {
+            background: var(--primary-color);
+            color: var(--dark-color);
+            padding: 32px 0 32px 0;
+            text-align: center;
+            position: relative;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            min-height: 120px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            height: 72px;
+        }
+        .logo-signature {
+            width: 56px;
+            height: 56px;
+            margin-right: 18px;
+            flex-shrink: 0;
+            display: block;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            line-height: 56px;
+            display: flex;
+            align-items: center;
+        }
+        .header-avatar.user-menu {
+            position: fixed;
+            top: 32px;
+            right: 48px;
+            z-index: 100;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .header-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid var(--primary-color);
+            object-fit: cover;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(255,182,193,0.15);
+        }
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid var(--primary-color);
+            object-fit: cover;
+            box-shadow: 0 2px 8px rgba(255,182,193,0.15);
+        }
+        .user-name {
+            font-size: 15px;
+            color: var(--dark-color);
+            font-weight: 500;
+            background: none;
+            border: none;
+            margin: 0;
+            padding: 0 4px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .user-caret {
+            font-size: 13px;
+            color: var(--gray-color);
+            margin-left: 2px;
+            pointer-events: none;
+        }
+        nav {
+            background: var(--light-color);
+            padding: 32px 0 24px 0;
+            text-align: center;
+            position: static;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: none;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+        .nav-menu-group {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            justify-content: center;
+            width: 100%;
+        }
+        nav button {
+            margin: 0 10px;
+            padding: 16px 40px;
+            background: var(--primary-color);
+            color: var(--dark-color);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 20px;
+            font-weight: 600;
+            box-shadow: var(--box-shadow);
+        }
+        nav button:hover {
+            background: var(--secondary-color);
+            color: var(--dark-color);
+        }
+        .nav-menu-group {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            justify-content: center;
+            width: 100%;
+        }
+        .user-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 0;
+            position: relative;
+        }
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid var(--primary-color);
+            object-fit: cover;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(255,182,193,0.15);
+        }
+        .user-name {
+            margin-top: 8px;
+            font-size: 15px;
+            color: var(--dark-color);
+            font-weight: 500;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 54px;
+            right: 0;
+            left: auto;
+            transform: none;
+            background: #fff;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.18);
+            min-width: 160px;
+            z-index: 10;
+            padding: 8px 0;
+        }
+        .dropdown-menu.active {
+            display: block;
+        }
+        .dropdown-menu button {
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            padding: 12px 20px;
+            text-align: left;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .dropdown-menu button:hover {
+            background: var(--light-color);
+        }
+        main {
+            max-width: 600px;
+            margin: 40px auto 0 auto;
+            background: #fff;
+            padding: 40px 36px 36px 36px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            color: var(--dark-color);
+        }
+        .section {
+            display: none;
+            color: var(--dark-color);
+        }
+        .section.active {
+            display: block;
+            color: var(--dark-color);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: var(--dark-color);
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ffd1dc;
+            background: #fffafd;
+            color: var(--dark-color);
+            font-size: 15px;
+        }
+        .actions {
+            text-align: right;
+        }
+        .actions button {
+            background: var(--primary-color);
+            color: var(--dark-color);
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .actions button:hover {
+            background: var(--secondary-color);
+            color: var(--dark-color);
+        }
+        #verifyResult {
+            margin-top:20px;
+            display:none;
+            background: var(--light-color);
+            padding:16px;
+            border-radius:var(--border-radius);
+            border: 1px solid var(--primary-color);
+            color: var(--dark-color);
+        }
+        ul {
+            color: var(--dark-color);
+            font-size: 15px;
+        }
+        pre {
+            color: var(--dark-color);
+            background: #fffafd;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 14px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: auto;
+        }
+        @media (max-width: 700px) {
+            .header-avatar.user-menu {
+                right: 12px;
+                top: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+        <header>
+            <div class="header-content">
+                <img src="logo-signature.svg" alt="Logo" class="logo-signature">
+                <h1>Hệ thống Quản lý Chữ ký số PKI</h1>
+            </div>
+        </header>
+        <div class="header-avatar user-menu" id="userMenu">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="avatar" class="user-avatar" id="userAvatar">
+            <span class="user-name" id="userName"></span>
+            <span class="user-caret">&#9662;</span>
+            <div class="dropdown-menu" id="userDropdown">
+                <button id="switchAccount">Đổi tài khoản</button>
+                <button id="logout">Đăng xuất</button>
+            </div>
+        </div>
+        <nav>
+            <div class="nav-menu-group">
+                <button onclick="showSection('register')">Đăng ký chữ ký số</button>
+                <button onclick="showSection('sign')">Ký tài liệu</button>
+                <button onclick="showSection('verify')">Xác thực chữ ký</button>
+            </div>
+        </nav>
+        <main>
+            <!-- Đăng ký chữ ký số -->
+            <section id="register" class="section active">
+                <h2>Đăng ký chữ ký số</h2>
+                <form>
+                    <label for="fullname">Họ và tên</label>
+                    <input type="text" id="fullname" name="fullname" required>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                    <label for="phone">Số điện thoại</label>
+                    <input type="tel" id="phone" name="phone" required>
+                    <div class="actions">
+                        <button type="submit">Đăng ký</button>
+                    </div>
+                </form>
+            </section>
+            <!-- Ký tài liệu -->
+            <section id="sign" class="section">
+                <h2>Ký tài liệu</h2>
+                <form>
+                    <label for="fileToSign">Chọn tài liệu</label>
+                    <input type="file" id="fileToSign" required>
+                    <div class="actions">
+                        <button type="submit">Ký tài liệu</button>
+                    </div>
+                </form>
+            </section>
+            <!-- Xác thực chữ ký -->
+            <section id="verify" class="section">
+                <h2>Xác thực chữ ký</h2>
+                <form id="verifyForm">
+                    <label for="fileToVerify">Chọn tài liệu đã ký</label>
+                    <input type="file" id="fileToVerify" required>
+                    <div class="actions">
+                        <button type="submit">Xác thực</button>
+                    </div>
+                </form>
+                <div id="verifyResult">
+                    <strong>Kết quả xác thực:</strong>
+                    <p><b>Họ tên người ký:</b> <span id="signerName"></span></p>
+                    <p><b>Ngày giờ ký:</b> <span id="signDate"></span></p>
+                </div>
+            </section>
+            <!-- Đăng xuất -->
+            <section id="logout" class="section">
+                <h2>Đăng xuất</h2>
+                <p>Bạn đã đăng xuất khỏi hệ thống.</p>
+                <button id="logout-btn">Quay về đăng nhập</button>
+            </section>
+        </main>
+        <script>
+            function showSection(id) {
+                document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+            }
+
+            // Dropdown user menu logic (avatar fixed top right)
+            const userAvatar = document.getElementById('userAvatar');
+            const userMenu = document.getElementById('userMenu');
+            const userDropdown = document.getElementById('userDropdown');
+            userMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userDropdown.classList.toggle('active');
+            });
+            document.addEventListener('click', function(e) {
+                if (!userMenu.contains(e.target)) {
+                    userDropdown.classList.remove('active');
+                }
+            });
+            document.getElementById('logout').addEventListener('click', function() {
+                window.location.href = 'dangnhap,taotk1.html';
+            });
+            document.getElementById('switchAccount').addEventListener('click', function() {
+                window.location.href = 'dangnhap,taotk1.html';
+            });
+
+            // Xử lý xác thực chữ ký (giả lập)
+            document.getElementById('verifyForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Giả lập dữ liệu xác thực
+                const signer = "Nguyễn Văn A";
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('vi-VN') + " " + now.toLocaleTimeString('vi-VN');
+                document.getElementById('signerName').textContent = signer;
+                document.getElementById('signDate').textContent = dateStr;
+                document.getElementById('verifyResult').style.display = 'block';
+            });
+
+            // Xử lý đăng xuất trên thanh điều hướng
+            document.getElementById('logout').addEventListener('click', function() {
+                window.location.href = 'dangnhap,taotk1.html';
+            });
+
+            // Xử lý đăng xuất ở section
+            var logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    window.location.href = 'dangnhap,taotk1.html';
+                });
+            }
+
+            // Đóng dropdown khi nhấp ra ngoài
+            window.addEventListener('click', function(e) {
+                if (!document.querySelector('.user-menu').contains(e.target)) {
+                    document.getElementById('userDropdown').classList.remove('active');
+                }
+            });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const userName = document.getElementById('userName');
+                // Lấy tên từ localStorage (do trang đăng ký đã lưu)
+                userName.textContent = localStorage.getItem('username') || 'Người dùng';
+
+                // Tính chiều rộng tên và lùi avatar + dropdown sang trái tương ứng
+                const userMenu = document.getElementById('userMenu');
+                setTimeout(() => {
+                    const nameWidth = userName.offsetWidth;
+                    userMenu.style.right = (16 + nameWidth) + 'px'; // 16px là khoảng cách avatar với mép phải
+                }, 0);
+            });
+
+            // Xử lý đăng ký chữ ký số (giả lập, không gọi backend)
+            document.querySelector('#register form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Sau khi đăng ký thành công:
+                const name = document.getElementById('fullname').value;
+                localStorage.setItem('username', name);
+                alert('Đăng ký thành công!');
+            });
+        </script>
+    </body>
+</html>
+app.listen(3000, '0.0.0.0', () => {
+    console.log('Server is running on port 3000');
+});
+
